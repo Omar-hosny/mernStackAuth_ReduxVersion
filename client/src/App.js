@@ -8,22 +8,26 @@ import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/routing/PrivateRoute";
 
 import NotFound from "./components/NotFound";
+import { Provider } from "react-redux";
+import store from "./store";
 
 const App = () => {
   return (
-    <Fragment>
-      <Router>
-        <Navbar />
-        <Switch>
-          {/* <PrivateRoute exact path="/" component={Home} /> */}
-          <Route exact path="/" component={Home} />
+    <Provider store={store}>
+      <Fragment>
+        <Router>
+          <Navbar />
+          <Switch>
+            <PrivateRoute exact path="/" component={Home} />
+            {/* <Route exact path="/" component={Home} /> */}
 
-          <Route exact path="/register" component={Register} />
-          <Route exact path="/login" component={Login} />
-          <Route component={NotFound} />
-        </Switch>
-      </Router>
-    </Fragment>
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/login" component={Login} />
+            <Route component={NotFound} />
+          </Switch>
+        </Router>
+      </Fragment>
+    </Provider>
   );
 };
 

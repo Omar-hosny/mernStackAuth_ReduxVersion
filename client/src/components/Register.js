@@ -1,13 +1,33 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import { registerUser } from "../actions/authActions";
+import PropTypes from "prop-types";
 
-const Register = () => {
+const Register = ({
+  auth: { isAuthenticated, error, loading },
+  registerUser,
+  history
+}) => {
+  useEffect(() => {
+    if (error !== null) {
+      setErrors(error);
+      clearErrors();
+    }
+
+    if (isAuthenticated) {
+      history.push("/");
+    }
+
+    // eslint-disable-next-line
+  }, [error, isAuthenticated, history]);
+
   const [user, setUser] = useState({
     name: "",
     email: "",
     password: ""
   });
 
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState(error);
 
   const { name, email, password } = user;
 
@@ -20,13 +40,19 @@ const Register = () => {
     if (!name || !email || !password) {
       setErrors("Please enter all fields..");
       clearErrors();
+    } else {
+      registerUser({
+        name,
+        email,
+        password
+      });
+      // clear Inputs
+      setUser({
+        name: "",
+        email: "",
+        password: ""
+      });
     }
-    // clear Inputs
-    setUser({
-      name: "",
-      email: "",
-      password: ""
-    });
   };
 
   // clear errors
@@ -35,6 +61,10 @@ const Register = () => {
       setErrors("");
     }, 3000);
   };
+
+  if (loading) {
+    return <h1 className="text-center">Loading...</h1>;
+  }
 
   return (
     <div className="layout">
@@ -93,4 +123,13 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propTypes = {
+  registerUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps, { registerUser })(Register);

@@ -1,12 +1,31 @@
 import React, { useState, useEffect } from "react";
+import { connect } from "react-redux";
+import { loginUser } from "../actions/authActions";
+import PropTypes from "prop-types";
 
-const Login = () => {
+const Login = ({
+  auth: { isAuthenticated, error, loading },
+  loginUser,
+  history
+}) => {
+  useEffect(() => {
+    if (error !== null) {
+      setErrors(error);
+      clearErrors();
+    }
+
+    if (isAuthenticated) {
+      history.push("/");
+    }
+    // eslint-disable-next-line
+  }, [error, isAuthenticated, history.push]);
+
   const [user, setUser] = useState({
     email: "",
     password: ""
   });
 
-  const [errors, setErrors] = useState("");
+  const [errors, setErrors] = useState(error);
 
   const { email, password } = user;
 
@@ -19,12 +38,17 @@ const Login = () => {
     if (!email || !password) {
       setErrors("Please enter all fields..");
       clearErrors();
+    } else {
+      loginUser({
+        email,
+        password
+      });
+      // clear Inputs
+      setUser({
+        email: "",
+        password: ""
+      });
     }
-    // clear Inputs
-    setUser({
-      email: "",
-      password: ""
-    });
   };
 
   // clear errors
@@ -82,4 +106,13 @@ const Login = () => {
   );
 };
 
-export default Login;
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps, { loginUser })(Login);
