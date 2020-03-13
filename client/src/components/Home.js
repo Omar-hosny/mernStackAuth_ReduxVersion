@@ -2,8 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
-const Home = ({ isAuthenticated }) => {
-  if (!isAuthenticated) {
+const Home = ({ loading }) => {
+  if (loading) {
     return <h1 className="text-center mt-5">Loading....</h1>;
   }
 
@@ -27,11 +27,11 @@ const Home = ({ isAuthenticated }) => {
 };
 
 Home.propTypes = {
-  isAuthenticated: PropTypes.isRequired
+  loading: PropTypes.isRequired
 };
 
 const mapStateToProps = state => ({
-  isAuthenticated: state.auth.isAuthenticated
+  loading: state.auth.loading
 });
 
 export default connect(mapStateToProps)(Home);
